@@ -25,7 +25,7 @@ from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
 
 
 from sklearn.model_selection import KFold, StratifiedKFold
-
+from matplotlib import pyplot as plt
 #import pandas as pd
 import numpy as np
 
@@ -194,7 +194,7 @@ for train,test in kfold.split(x_train,y_train):
 # In[18]:
 
 
-from matplotlib import pyplot as plt
+
 acc = history.history['accuracy']
 val_acc = history.history['val_accuracy']
 
