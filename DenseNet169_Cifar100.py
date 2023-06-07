@@ -4,7 +4,7 @@
 # #Importaciones
 # 
 
-# In[9]:
+# In[1]:
 
 
 import tensorflow as tf
@@ -32,7 +32,7 @@ import numpy as np
 
 # #Hiperparámetros
 
-# In[4]:
+# In[2]:
 
 
 img_height = 32
@@ -49,7 +49,7 @@ no_classes = 100
 # #Optimizadores
 # 
 
-# In[6]:
+# In[3]:
 
 
 new_adam = Adam(learning_rate=2e-5)
@@ -60,7 +60,7 @@ old_sgd = tf.keras.optimizers.SGD(learning_rate=lr, momentum = 0.9)
 # #Definición de modelo DenseNet 169
 # 
 
-# In[7]:
+# In[4]:
 
 
 def make_model_densenet169(weights=None):
@@ -88,7 +88,7 @@ def make_model_densenet169(weights=None):
 
 # #Carga de CIFAR100 y Stratified 10 Fold 
 
-# In[8]:
+# In[6]:
 
 
 # import cifar 100 data
@@ -100,12 +100,12 @@ def make_model_densenet169(weights=None):
 #print('x_test shape:', x_test.shape)
 #print('y_test shape:', y_test.shape)
 # Parse numbers as floats
-input_train = x_train.astype('float32')
-input_test = x_test.astype('float32')
+x_train = x_train.astype('float32')
+x_test = x_test.astype('float32')
 
 # Normalize data
-input_train = input_train / 255
-input_test = input_test / 255
+x_train = x_train / 255
+x_test = x_test / 255
 
 
 # In[11]:
@@ -113,11 +113,11 @@ input_test = input_test / 255
 
 #Merge inputs and targets
 
-inputs = np.concatenate((x_train,x_test), axis=0)
-targets = np.concatenate((y_train, y_test), axis = 0)
+#inputs = np.concatenate((x_train,x_test), axis=0)
+#targets = np.concatenate((y_train, y_test), axis = 0)
 
 
-# In[12]:
+# In[7]:
 
 
 #Define the K-fold cross validator
@@ -126,7 +126,7 @@ kfold = StratifiedKFold(n_splits = 10, shuffle = True, random_state = 123)
 
 # #Resultados
 
-# In[13]:
+# In[8]:
 
 
 resultados = {'accuracy':[], 'val_accuracy':[], 'loss':[], 'val_loss':[]}
@@ -134,11 +134,23 @@ resultados = {'accuracy':[], 'val_accuracy':[], 'loss':[], 'val_loss':[]}
 
 # #Stratified 10 Fold Cross Validation
 
-# In[14]:
+# In[15]:
 
 
 fold_no = 1
-for train,test in kfold.split(inputs,targets):
+for train,test in kfold.split(x_train,y_train):
+    print(x_train[train].shape)
+    print(y_train[train].shape)
+    print(x_train[test].shape)
+    print(y_train[test].shape)
+    fold_no+=1
+
+
+# In[17]:
+
+
+fold_no = 1
+for train,test in kfold.split(x_train,y_train):
   #Configurar conjunto de datos para rendimiento
   #AUTOTUNE = tf.data.AUTOTUNE
   #train = train.cache().prefetch(buffer_size = AUTOTUNE)
@@ -160,7 +172,7 @@ for train,test in kfold.split(inputs,targets):
   checkpoint = ModelCheckpoint(best_model_dir, verbose=1, save_best_only=True)
 
   #Entrenar el modelo
-  history = model.fit(inputs[train], targets[train], validation_data= (inputs[test], targets[test]),epochs=epochs, batch_size=batch_size, callbacks=[anne])
+  history = model.fit(x_train[train], y_train[train], validation_data= (x_train[test], y_train[test]),epochs=epochs, batch_size=batch_size, callbacks=[anne])
 
   # Guardar el modelo / (pesos)
   model.save(best_model_dir)
@@ -179,7 +191,7 @@ for train,test in kfold.split(inputs,targets):
 
 # #Visualizar Datos
 
-# In[1]:
+# In[18]:
 
 
 from matplotlib import pyplot as plt
@@ -203,13 +215,8 @@ plt.plot(epochs_range, loss, label='Training Loss')
 plt.plot(epochs_range, val_loss, label='Validation Loss')
 plt.legend(loc='upper right')
 plt.title('Training and Validation Loss')
+plt.savefig('training_graphs.png', bbox_inches='tight')
 plt.show()
-
-
-# In[21]:
-
-
-
 
 
 # In[ ]:
