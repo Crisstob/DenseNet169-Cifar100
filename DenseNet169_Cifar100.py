@@ -70,11 +70,11 @@ def make_model_densenet169():
 
     x = GlobalAveragePooling2D()(x)
     x = BatchNormalization()(x)
-    x = Dropout(0.7)(x)
-    x = Dense(1024,activation='relu')(x) 
+    x = Dropout(0.2)(x)
     x = Dense(512,activation='relu')(x) 
+    x = Dense(216,activation='relu')(x) 
     x = BatchNormalization()(x)
-    x = Dropout(0.7)(x)
+    x = Dropout(0.2)(x)
 
     preds = Dense(no_classes, activation='softmax')(x) #FC-layer
     
